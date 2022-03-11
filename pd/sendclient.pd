@@ -1,0 +1,28 @@
+#N canvas 148 480 775 390 12;
+#X obj 29 316 netsend -u -b;
+#X msg 53 71 disconnect;
+#X obj 29 347 tgl 15 0 empty empty connected? 17 7 0 10 #fcfcfc #000000
+#000000 0 1;
+#X floatatom 113 129 5 0 0 0 - - - 0;
+#X obj 113 160 oscformat /temperature;
+#X obj 426 224 pack s f;
+#X msg 426 193 temperature;
+#X obj 426 164 t b f;
+#X floatatom 426 132 5 0 0 0 - - - 0;
+#X msg 29 42 connect localhost 7777;
+#X text 201 41 <- start here;
+#X text 109 104 send single key/value: temperature f;
+#X obj 426 254 oscformat /telemetry;
+#X text 403 103 send multiple key/value pairs: k v \, k v \, ...;
+#X text 511 224 in this case we only send one pair;
+#X connect 0 0 2 0;
+#X connect 1 0 0 0;
+#X connect 3 0 4 0;
+#X connect 4 0 0 0;
+#X connect 5 0 12 0;
+#X connect 6 0 5 0;
+#X connect 7 0 6 0;
+#X connect 7 1 5 1;
+#X connect 8 0 7 0;
+#X connect 9 0 0 0;
+#X connect 12 0 0 0;
