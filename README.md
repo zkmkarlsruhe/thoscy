@@ -50,7 +50,7 @@ make
 
 ### ThingsBoard
 
-If starting with ThingsBoard from scratch, it's highly recommended to first consult the official [ThingsBoard Community [Getting Started Guide](https://thingsboard.io/docs/getting-started-guides/helloworld/).
+If starting with ThingsBoard from scratch, it's highly recommended to first consult the official ThingsBoard Community [Getting Started Guide](https://thingsboard.io/docs/getting-started-guides/helloworld/).
 
 Running
 -------
@@ -61,11 +61,11 @@ Send and receive functionality is split into two separate scripts: `thoscy-send`
 
 Start an OSC send server on the commandline via the virtual environment wrapper script:
 
-    ./thoscy-send TB_HOST TB_TOKEN
+    ./thoscy-send HOST TOKEN
 
-`TB_HOST` is the ThingsBoard server host name, ie. board.mydomain.com.
+`HOST` is the ThingsBoard server host name, ie. board.mydomain.com.
 
-`TB_TOKEN` is ThingsBoard device access token.
+`TOKEN` is ThingsBoard device access token.
 
 Once running, thoscy-send can simply sit in the background and automatically parses OSC messages into telemetry messages to send to the device on ThingsBoard. Message handling is as follows:
 
