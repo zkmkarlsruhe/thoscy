@@ -1,9 +1,9 @@
 thoscy
 ======
 
-_thoscy: **th**ingsboard **osc** rel**y**_
+_thoscy: **th**ingsboard **osc** rela**y**_
 
-Relay messages between a Thingsboard server and OSC.
+Relay messages between a ThingsBoard server and OSC.
 
 This code base has been developed by [ZKM | Hertz-Lab](https://zkm.de/en/about-the-zkm/organization/hertz-lab) as part of the project [»The Intelligent Museum«](#the-intelligent-museum). 
 
@@ -15,7 +15,7 @@ BSD Simplified License.
 Description
 -----------
 
-This set of scripts act as relay servers for forwarding device events between a ThingsBoard server using MQTT and OSC (Open Sound Control) messages. `thoscy-send` forwards messages from OSC to a ThingsBoard host while `thoscy-recv` listens for ThingsBoard device events and fowards them over OSC. This is useful for creative coding tools which work with OSC messages natively, but do not have built-in MQTT support.
+This set of scripts act as relay servers for forwarding device events between a ThingsBoard server using MQTT and OSC (Open Sound Control) messages. `thoscy-send` forwards messages from OSC to a ThingsBoard host while `thoscy-recv` listens for ThingsBoard device events and forwards them over OSC. This is useful for creative coding tools which work with OSC messages natively, but do not have built-in MQTT support.
 
 From [thingsboard.io](https://thingsboard.io):
 
@@ -55,7 +55,7 @@ If starting with ThingsBoard from scratch, it's highly recommended to first cons
 Running
 -------
 
-Send and recieve functionality is split into two separate scripts: `thoscy-send` and `thoscy-recv`.
+Send and receive functionality is split into two separate scripts: `thoscy-send` and `thoscy-recv`.
 
 ### thoscy-send
 
@@ -92,7 +92,7 @@ To stop thoscy-send, use CTRL+C to issue an interrupt signal.
 
 The Python scripts can be called directly without the wrapper script, but requires manually enabling or disabling the virtual environment:
 
-Aactivate the virtual environment before the first run in a new commandline session:
+Activate the virtual environment before the first run in a new commandline session:
 
     source venv/bin/activate
 
