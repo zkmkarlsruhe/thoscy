@@ -20,7 +20,7 @@ import argparse
 import time
 import sys
 
-from tb_device_mqtt import TBDeviceMqttClient, TBPublishInfo
+from tb_device_mqtt import TBDeviceMqttClient
 from pythonosc.dispatcher import Dispatcher
 from pythonosc.osc_server import AsyncIOOSCUDPServer
 
@@ -34,7 +34,7 @@ parser.add_argument(
     default="", help="ThingsBoard server host name, ie. board.mydomain.com")
 parser.add_argument(
     "token", type=str, nargs="?", metavar="TOKEN",
-    default="", help="ThingsBoard device access token")
+    default="", help="ThingsBoard device access token, required for TLS connection")
 parser.add_argument(
     "-a", "--address", action="store", dest="addr",
     default="127.0.0.1", help="osc receive address, default: 127.0.0.1")
@@ -89,12 +89,15 @@ loop.add_signal_handler(signal.SIGINT, sigint_handler)
 
 # parse
 args = parser.parse_args()
-print(f"osc {args.addr}:{args.port} -> mqtt {args.host}")
+if args.host == "":
+    print("thingsboard server host name required")
+    sys.exit(1)
 if args.verbose:
     verbose = True
 
 # connect to thingsboard
 thingsboard = TBDeviceMqttClient(args.host, args.token)
+#thingsboard.max_inflight_messages_set(100) # set this?
 try:
     thingsboard.connect()
 except Exception as exc:
@@ -107,6 +110,8 @@ dispatcher.set_default_handler(received_osc)
 dispatcher.map("/telemetry", received_telemetry)
 server = AsyncIOOSCUDPServer((args.addr, args.port), dispatcher, loop)
 loop.run_until_complete(server.create_serve_endpoint())
+
+print(f"osc {args.addr}:{args.port} -> mqtt {args.host}")
 
 try:
     loop.run_forever()
