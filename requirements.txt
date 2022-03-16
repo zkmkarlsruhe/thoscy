@@ -1,2 +1,8 @@
+# send
 tb-mqtt-client
 python-osc
+
+# recv
+websockets
+pyjwt
+requests
