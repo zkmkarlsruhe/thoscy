@@ -1,6 +1,8 @@
 thoscy
 ======
 
+![thoscy logo](media/icon.png)
+
 _thoscy: **th**ingsboard **osc** rela**y**_
 
 Relay messages between a ThingsBoard server and OSC.
