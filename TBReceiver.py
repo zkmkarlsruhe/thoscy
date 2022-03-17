@@ -114,7 +114,7 @@ class TBReceiver:
         data = {"username": user, "password": password}
         req = requests.post(url, headers=header, json=data)
         if req.status_code != 200:
-            logger.error(f"requesting access token failed: {req.status_code} {req.json()['message']}")
+            logger.error(f"requesting login tokens failed: {req.status_code} {req.json()['message']}")
             return None
         resp = req.json()
         access = resp["token"]
@@ -130,7 +130,7 @@ class TBReceiver:
         data = {"refreshToken": refresh}
         req = requests.post(url, headers=header, json=data)
         if req.status_code != 200:
-            logger.error(f"requesting access token failed: {req.status_code} {req.json()['message']}")
+            logger.error(f"requesting main tokens failed: {req.status_code} {req.json()['message']}")
             return None
         resp = req.json()
         access = resp["token"]
@@ -141,7 +141,7 @@ class TBReceiver:
 ##### main
 
 # test program to connect & print received telemetry messages
-# exanple usage: python3 TBReceiver.py thingsboard.mydomain.com tenant@mydomain.com PASSWORD DEVICE_TOKEN
+# exanple usage: python3 TBReceiver.py thingsboard.mydomain.com DEVICE_TOKEN tenant@mydomain.com PASSWORD
 if __name__ == '__main__':
     from threading import Thread
     import argparse
