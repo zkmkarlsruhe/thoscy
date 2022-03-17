@@ -27,7 +27,6 @@ import jwt
 
 import logging
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 # ThingsBoard WebSocket receiver
 # based on WSClient by Pietro Grandinetti:
@@ -115,7 +114,7 @@ class TBReceiver:
         data = {"username": user, "password": password}
         req = requests.post(url, headers=header, json=data)
         if req.status_code != 200:
-            print(f"requesting access token failed: {req.status_code} {req.json()['message']}")
+            logger.error(f"requesting access token failed: {req.status_code} {req.json()['message']}")
             return None
         resp = req.json()
         access = resp["token"]
@@ -131,7 +130,7 @@ class TBReceiver:
         data = {"refreshToken": refresh}
         req = requests.post(url, headers=header, json=data)
         if req.status_code != 200:
-            print(f"requesting access token failed: {req.status_code} {req.json()['message']}")
+            logger.error(f"requesting access token failed: {req.status_code} {req.json()['message']}")
             return None
         resp = req.json()
         access = resp["token"]
@@ -153,6 +152,9 @@ if __name__ == '__main__':
         if data_entry == None:
             print("data empty, are you allowed access to the device?")
             return
+        if data["errorCode"] != 0:
+            print(f"telemetry error: {data['errorCode']} {data['errorMsg']}")
+            return
         print(data)
         for key in data_entry.keys():
             if key == "json": continue
@@ -164,20 +166,22 @@ if __name__ == '__main__':
         "host", type=str, nargs="?", metavar="HOST",
         default="", help="ThingsBoard server host name, ie. board.mydomain.com")
     parser.add_argument(
+        "token", type=str, nargs="?", metavar="TOKEN",
+        default="", help="ThingsBoard device access token")
+    parser.add_argument(
         "user", type=str, nargs="?", metavar="USER",
         default="", help="ThingsBoard user name")
     parser.add_argument(
         "password", type=str, nargs="?", metavar="PASS",
         default="", help="ThingsBoard user password")
-    parser.add_argument(
-        "token", type=str, nargs="?", metavar="TOKEN",
-        default="", help="ThingsBoard device token")
     parser.add_argument("-v", "--verbose", action="store_true", dest="verbose",
         help="enable verbose printing")
     args = parser.parse_args()
-    if args.host == "" or args.user == "" or args.password == "" or args.token == "" :
-        print("host, user, password, & device token required")
+    if args.host == "" or args.token == "" or args.user == "" or args.password == "":
+        print("host, device token, user, & password required")
         sys.exit(1)
+    if args.verbose:
+        logging.basicConfig(level=logging.DEBUG)
 
     # connect & subscribe to device telemetry
     subscription_cmd = {
