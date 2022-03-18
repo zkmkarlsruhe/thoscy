@@ -103,7 +103,9 @@ Start an OSC receive server on the commandline via the virtual environment wrapp
     ./thoscy-recv HOST TOKEN USER PASS
 
 `HOST` is the ThingsBoard server host name, ie. board.mydomain.com
+
 `TOKEN` is the ThingsBoard device access token.
+
 `USER` and `PASS` are the ThingsBoard user login credentials.
 
 Once running, thoscy-recv automatically parses ThingsBoard device telemetry messsages received over a WebSocket into OSC messages. Message handling is as follows:
