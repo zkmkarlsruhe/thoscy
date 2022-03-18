@@ -77,7 +77,7 @@ def received_telemetry(data):
             value = data_entry[key][0][1]
             message.add_arg(key)
             message.add_arg(value)
-            if args.verbose: print(f" {key} {value}", end="")
+            if args.verbose: print(f" {key}: {value}", end="")
         sender.send(message.build())
         if args.verbose: print("")
     else:
@@ -90,7 +90,7 @@ def received_telemetry(data):
             message = osc_message_builder.OscMessageBuilder(address="/"+key)
             message.add_arg(value)
             bundle.add_content(message.build())
-            if args.verbose: print(f"/{key} {value}")
+            if args.verbose: print(f"{key}: {value}")
         sender.send(bundle.build())
 
 ##### main
