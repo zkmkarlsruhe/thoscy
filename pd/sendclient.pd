@@ -1,4 +1,4 @@
-#N canvas 148 480 775 390 12;
+#N canvas 35 129 775 390 12;
 #X obj 29 316 netsend -u -b;
 #X msg 53 71 disconnect;
 #X obj 29 347 tgl 15 0 empty empty connected? 17 7 0 10 #fcfcfc #000000

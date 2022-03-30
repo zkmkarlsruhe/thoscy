@@ -166,8 +166,8 @@ if __name__ == '__main__':
         "host", type=str, nargs="?", metavar="HOST",
         default="", help="ThingsBoard server host name, ie. board.mydomain.com")
     parser.add_argument(
-        "token", type=str, nargs="?", metavar="TOKEN",
-        default="", help="ThingsBoard device access token")
+        "id", type=str, nargs="?", metavar="ID",
+        default="", help="ThingsBoard device id")
     parser.add_argument(
         "user", type=str, nargs="?", metavar="USER",
         default="", help="ThingsBoard user name")
@@ -177,8 +177,8 @@ if __name__ == '__main__':
     parser.add_argument("-v", "--verbose", action="store_true", dest="verbose",
         help="enable verbose printing")
     args = parser.parse_args()
-    if args.host == "" or args.token == "" or args.user == "" or args.password == "":
-        print("host, device token, user, & password required")
+    if args.host == "" or args.id == "" or args.user == "" or args.password == "":
+        print("host, device id, user, & password required")
         sys.exit(1)
     if args.verbose:
         logging.basicConfig(level=logging.DEBUG)
@@ -188,7 +188,7 @@ if __name__ == '__main__':
         "tsSubCmds": [
             {
                 "entityType": "DEVICE",
-                "entityId": args.token,
+                "entityId": args.id,
                 "scope": "LATEST_TELEMETRY",
                 "cmdId": 10
             }

@@ -72,7 +72,7 @@ Start an OSC send server on the commandline via the virtual environment wrapper 
 
 `HOST` is the ThingsBoard server host name, ie. board.mydomain.com.
 
-`TOKEN` is the ThingsBoard device access token.
+`TOKEN` is the ThingsBoard device access token (not id).
 
 Once running, thoscy-send automatically parses OSC messages into telemetry messages to send to the device on ThingsBoard via MQTT. Message handling is as follows:
 
@@ -100,11 +100,11 @@ To stop thoscy-send, use CTRL+C to issue an interrupt signal.
 
 Start an OSC receive server on the commandline via the virtual environment wrapper script:
 
-    ./thoscy-recv HOST TOKEN USER PASS
+    ./thoscy-recv HOST ID USER PASS
 
 `HOST` is the ThingsBoard server host name, ie. board.mydomain.com
 
-`TOKEN` is the ThingsBoard device access token.
+`ID` is the ThingsBoard device id (not access token).
 
 `USER` and `PASS` are the ThingsBoard user login credentials.
 
