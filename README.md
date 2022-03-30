@@ -117,6 +117,7 @@ Once running, thoscy-recv automatically parses ThingsBoard device telemetry mess
 * Receive multiple values: `{"value1": 123, "value2": 456} -> "/telemetry value1 123 value2 456"`
   - Key/value pairs sent in a OSC single message
   - Key/value pairs appended as arguments
+  - Value types: string or float
   - JSON key/value pairs are ignored
 
 _Note: Forwarding telemetry messages as a `/telemetry` OSC message with multiple values requires using the `-t/--telemetry` commandline option._

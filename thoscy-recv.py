@@ -56,7 +56,7 @@ parser.add_argument("-v", "--verbose", action="store_true", dest="verbose",
 ##### thingsboard
 
 # telemetry callback, sends key/value pairs as osc messages
-# note: ignores json keys for now
+# note: tries to convert values to float, ignores json keys for now
 def received_telemetry(data):
     data_entry = data["data"]
     if data_entry == None:
@@ -75,6 +75,10 @@ def received_telemetry(data):
         for key in data_entry.keys():
             if key == "json": continue
             value = data_entry[key][0][1]
+            try:
+                value = float(value)
+            except:
+                pass
             message.add_arg(key)
             message.add_arg(value)
             if args.verbose: print(f" {key}: {value}", end="")
@@ -87,6 +91,10 @@ def received_telemetry(data):
         for key in data_entry.keys():
             if key == "json": continue
             value = data_entry[key][0][1]
+            try:
+                value = float(value)
+            except:
+                pass
             message = osc_message_builder.OscMessageBuilder(address="/"+key)
             message.add_arg(value)
             bundle.add_content(message.build())
