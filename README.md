@@ -163,6 +163,12 @@ Both examples should work together with the default address & ports on the same 
 
 First start thoscy-send or thoscy-recv, then start the affiliated client, ie. sendclient.pd & thoscy-send. To see data changing on the server, create/open a ThingsBoard Dashboard with widgets that show the device entity values.
 
+### Loopback
+
+Additionally, there is the pd/loopback.pd patch which pairs a sender and reciever with basic latency measurement.
+
+Turn on random temperature messages and lower the message frequency in ms to see how quickly messages can be sent and received before matched send/recv pairs start to mix. Add maybe 20-50 ms on top of that for a basic effective update frequency. This value is likely based on network configuration, if sending over a local LAN or over the internet, ThingsBoard server resources, etc.
+
 The Intelligent Museum
 ----------------------
 
