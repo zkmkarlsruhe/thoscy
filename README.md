@@ -53,11 +53,49 @@ Create a virtual environment and install the script's dependencies:
 make
 ```
 
-### ThingsBoard
+ThingsBoard
+-----------
 
 If starting with ThingsBoard from scratch, it's highly recommended to first consult the official ThingsBoard Community [Getting Started Guide](https://thingsboard.io/docs/getting-started-guides/helloworld/).
 
-Once a device is created, sending and receiving via the server host and device access token should be possible using the thoscy tools.
+Otherwise, a _very basic_ overview follows.
+
+### Creating a device
+
+Basic steps for creating a device (as of Spring 2022):
+
+1. Create an account & log into the ThingsBoard server
+2. Click on Devices in the sidebar
+3. In the Devices panel, click the + in the upper right and choose "Add new device"
+4. Enter a name (such as "Test device", "Foo", etc) and click Add
+
+Once a device is created, sending and receiving via the server host and device access token / id should be possible using the thoscy tools.
+
+### Device access token and id
+
+To find the device access token and id:
+
+1. Log into the ThingsBoard server
+2. Click on Devices in the sidebar
+3. In the Devices panel, choose the device in the list
+4. In the Device details, choose the Details tab
+5. Click either the "Copy device id" or "Copy access token"
+6. Paste text somewhere on your system, ie. in TexEdit, onto the console, etc
+
+`thoscy-send` uses the device access token
+
+`thoscy-recv` uses the device id 
+
+### Watching device telemetry in realtime
+
+To view the current device telemetry values in "realtime" without setting up a ThingsBoard Dashboard:
+
+1. Log into the ThingsBoard server
+2. Click on Devices in the sidebar
+3. In the Devices panel, choose the device in the list
+4. In the Device details, choose the Telemetry tab
+
+_Note: This shows *all* received key/pair pairs, even those not currently in use._
 
 Running
 -------
