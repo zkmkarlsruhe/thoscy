@@ -1,3 +1,15 @@
+0.2.0: 2022 Mar 30
+
+beta
+
+* fixed received values always str type
+* fixed incorrect TBReceiver example argument order
+
+* added loopback patch and info
+
+* fleshed out basic thingsboard device setup and usage
+* updates to reflect receiver uses device id and *not* device token
+
 0.1.0: 2022 Mar 17
 
 initial version
