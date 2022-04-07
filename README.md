@@ -21,7 +21,7 @@ This set of scripts act as relay servers for forwarding device events between a 
 
 From [thingsboard.io](https://thingsboard.io):
 
->ThingsBoard is an open-source IoT platform for data collection, processing, visualization, and device management
+>ThingsBoard is an open-source IoT platform for data collection, processing, visualization, and device management.
 >It enables device connectivity via industry standard IoT protocols - MQTT, CoAP and HTTP and supports both cloud and on-premises deployments. ThingsBoard combines scalability, fault-tolerance and performance so you will never lose your data.
 
 From [opensoundcontrol.org](OpenSoundControl.org):
@@ -189,6 +189,8 @@ When finished, deactivate the virtual environment with:
 
 Example Clients
 ---------------
+
+![example use cases](media/example%20use%20cases.png)
 
 A couple of example clients are included:
 
