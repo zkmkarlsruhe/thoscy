@@ -57,7 +57,7 @@ def received_osc(address, *args):
         print(f"{address} {args} -> {telemetry}")
 
 # send multiple values:
-# "/telemetry value1 123 value2 456" -> {"value1": 123, "value2": 456}
+# "*/telemetry value1 123 value2 456" -> {"value1": 123, "value2": 456}
 def received_telemetry(address, *args):
     if len(args) < 2:
         print(f"{address}: min of 2 arguments is required")
@@ -107,7 +107,7 @@ except Exception as exc:
 # start osc server
 dispatcher = Dispatcher()
 dispatcher.set_default_handler(received_osc)
-dispatcher.map("/telemetry", received_telemetry)
+dispatcher.map("*/telemetry", received_telemetry)
 server = AsyncIOOSCUDPServer((args.addr, args.port), dispatcher, loop)
 loop.run_until_complete(server.create_serve_endpoint())
 

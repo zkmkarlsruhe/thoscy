@@ -119,6 +119,7 @@ Once running, thoscy-send automatically parses OSC messages into telemetry messa
   - First argument uses as entity value
   - Message must contain at least one argument
 * Send multiple values: `"/telemetry value1 123 value2 456" -> {"value1": 123, "value2": 456}`
+  - Last address component `telemetry`
   - Arguments are treated as entity key/value pairs
   - Each argument key must be a string type
   - Message must contain at least two arguments (key/value pair)
