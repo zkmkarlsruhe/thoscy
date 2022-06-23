@@ -4,5 +4,4 @@ python-osc
 
 # recv
 websockets
-pyjwt
 requests

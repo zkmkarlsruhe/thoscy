@@ -1,6 +1,4 @@
-#! /bin/sh
-#
-# run script wrapper for Python virtual environment
+#! /usr/bin/env python3
 #
 # Copyright (c) 2022 ZKM | Hertz-Lab
 # Dan Wilcox <dan.wilcox@zkm.de>
@@ -12,9 +10,33 @@
 # This code has been developed at ZKM | Hertz-Lab as part of „The Intelligent
 # Museum“ generously funded by the German Federal Cultural Foundation.
 
-DIR="$(dirname $0)"
-SCRIPT=thoscy-send.py
+import json
 
-. "$DIR"/venv/bin/activate
-"$DIR"/$SCRIPT "$@"
-deactivate
+host = ""
+user = ""
+password = ""
+
+devices = {}
+
+send = {
+	"address": "127.0.0.1",
+	"port": 7777,
+	"devices": [],
+	"telemetry": False
+}
+
+recv = {
+	"address": "127.0.0.1",
+	"port": 7788,
+	"devices": [],
+	"telemetry": False
+}
+
+verbose = False
+
+def load_args(config, args):
+	if args["host"] != None: config["host"] = 
+	return config
+
+def load_file(config, path):
+

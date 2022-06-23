@@ -35,7 +35,6 @@ Dependencies
 * [tb-mqtt-client](https://github.com/thingsboard/thingsboard-python-client-sdk)
 * [python-osc](https://github.com/attwad/python-osc)
 * [websockets](https://github.com/aaugustin/websockets)
-* [pyjwt](https://github.com/jpadilla/pyjwt)
 * [requests](https://github.com/psf/requests)
 
 Setup
