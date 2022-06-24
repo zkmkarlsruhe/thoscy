@@ -319,10 +319,10 @@ Example Clients
 
 ![example use cases](media/example%20use%20cases.png)
 
-A couple of example clients are included:
+A set of example clients are included:
 
-* pd/sendclient.pd: Pure Data patch which sends OSC messages
-* pd/recvclient.pd: Pure Data patch which receives OSC messages
+* `pd/sendclient.pd`: Pure Data patch which sends OSC messages
+* `pd/recvclient.pd`: Pure Data patch which receives OSC messages
 
 Both examples should work together with the default address & ports on the same localhost:
 
@@ -331,9 +331,21 @@ Both examples should work together with the default address & ports on the same 
 
 First start thoscy-send or thoscy-recv, then start the affiliated client, ie. sendclient.pd & thoscy-send. To see data changing on the server, create/open a ThingsBoard Dashboard with widgets that show the device entity values.
 
+### Multi
+
+Additionally, a set of clients are included for working with multiple devices:
+
+* `pd/multi-sendclient.pd`: Pure Data patch which sends OSC messages
+* `pd/multi-recvclient.pd`: Pure Data patch which receives OSC messages
+
+Like the clients above, they send to and receive from a ThingsBoard server, however these clients work with multiple devices and therefore require that:
+
+1. thoscy-send is started with a gateway device token and one or more device name strings
+2. thoscy-recv is started with one or more device ids
+
 ### Loopback
 
-Additionally, there is the pd/loopback.pd patch which pairs a sender and receiver with basic latency measurement.
+There is the `pd/loopback.pd` patch which pairs a sender and receiver with basic latency measurement.
 
 Turn on random temperature messages and lower the message frequency in ms to see how quickly messages can be sent and received before matched send/recv pairs start to mix. Add maybe 20-50 ms on top of that for a basic effective update frequency. This value is likely based on network configuration, if sending over a local LAN or over the internet, ThingsBoard server resources, etc.
 

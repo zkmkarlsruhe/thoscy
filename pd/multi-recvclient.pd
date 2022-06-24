@@ -1,0 +1,22 @@
+#N canvas 820 130 573 360 12;
+#X obj 72 117 netreceive -u -b;
+#X obj 72 146 oscparse;
+#X msg 72 33 listen 7788;
+#X text 167 33 <- start here;
+#X msg 97 76 listen 0;
+#X obj 72 175 list trim;
+#X text 257 306 check console;
+#X obj 72 211 route thoscytest1 thoscytest2;
+#X obj 72 303 print thoscytest1;
+#X obj 172 274 print thoscytest2;
+#X obj 272 244 print other;
+#X text 156 173 route by device name: "thoscy test 1" & "thoscy test
+2";
+#X connect 0 0 1 0;
+#X connect 1 0 5 0;
+#X connect 2 0 0 0;
+#X connect 4 0 0 0;
+#X connect 5 0 7 0;
+#X connect 7 0 8 0;
+#X connect 7 1 9 0;
+#X connect 7 2 10 0;
