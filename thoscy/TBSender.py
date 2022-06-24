@@ -144,7 +144,7 @@ if __name__ == '__main__':
     if args.host == "" or args.token == "" or args.json == "":
         print("host, device access token, & json payload required")
         sys.exit(1)
-    if args.verbose: TBSender.set_verbose(true)
+    if args.verbose: TBSender.set_verbose(True)
 
     # send json
     try:
