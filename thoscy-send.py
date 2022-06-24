@@ -105,6 +105,7 @@ class Config:
             if config["verbose"] != None: self.verbose = config["verbose"]
             send = config["send"]
             if send != None:
+                if send["token"] != None: self.token = send["token"]
                 if send["address"] != None: self.address = send["address"]
                 if send["port"] != None: self.port = send["port"]
                 if send["devices"] != None and len(send["devices"]) > 0 and \
@@ -115,7 +116,8 @@ class Config:
                            device["name"] == None or \
                            device["name"] == "":
                             continue
-                        self.add_device(key, name)
+                        name = device["name"]
+                        self.add_device(name, name)
         except Exception as exc:
             print(f"could not open or read {args.file}: {type(exc).__name__} {exc}")
             return False
@@ -148,7 +150,7 @@ class Config:
 def received_osc(address, *args):
     if config.verbose:
         print(f"{address} {args}")
-    if len(config.devices) > 0:
+    if sender.gateway:
         # using gateway: filter first address component as device
         components = address.split("/")
         if len(components) < 3: # need min of: / device / key
