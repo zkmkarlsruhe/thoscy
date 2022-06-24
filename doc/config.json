@@ -1,0 +1,22 @@
+{
+  "host": "thingsboard.mydomain.com",
+  "user": "user@mydomain.com",
+  "password": "MYPASSWORD",
+  "devices": {
+  	"thoscy1": {"name": "thoscy test 1", "id": "e5a69b00-..."},
+  	"thoscy2": {"name": "thoscy test 2", "id": "78de40b0-..."}
+  },
+  "send": {
+  	"address": "127.0.0.1",
+  	"port": 7777,
+  	"token": "hNJ...",
+  	"devices": ["thoscy1", "thoscy2"]
+  },
+  "recv": {
+  	"address": "127.0.0.1",
+  	"port": 7788,
+  	"telemetry": false,
+  	"devices": ["thoscy1", "thoscy2"]
+  },
+  "verbose": false
+}

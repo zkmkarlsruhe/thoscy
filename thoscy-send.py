@@ -18,7 +18,6 @@ import signal
 import argparse
 import time
 import sys
-import os
 import re
 
 from pythonosc.dispatcher import Dispatcher
@@ -66,7 +65,6 @@ class Config:
 
     # load config from env vars, optional file, and commandline arguments
     def load(self, args):
-        self._load_env()
         if args.file != "":
             if not self._load_file(args.file):
                 return False
@@ -96,11 +94,6 @@ class Config:
             print("device(s)")
             for key in self.devices:
                 print(f"  /{key} -> {self.devices[key]}")
-
-    # load env vars
-    def _load_env(self):
-        # user credentials
-        if "THOSCY_HOST" in os.environ: self.host = os.environ.get("THOSCY_HOST")
 
     # load JSON file, returns True on success
     def _load_file(self, path):

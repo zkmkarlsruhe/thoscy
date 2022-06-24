@@ -112,9 +112,8 @@ class Config:
     # load env vars
     def _load_env(self):
         # user credentials
-        if "THOSCY_HOST" in os.environ: self.host = os.environ.get("THOSCY_HOST")
         if "THOSCY_USER" in os.environ: self.user = os.environ.get("THOSCY_USER")
-        if "THOSCY_PASSWORD" in os.environ: self.password = os.environ.get("THOSCY_PASSWORD")
+        if "THOSCY_PASS" in os.environ: self.password = os.environ.get("THOSCY_PASS")
 
     # load JSON file, returns True on success
     def _load_file(self, path):
