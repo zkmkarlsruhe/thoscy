@@ -53,6 +53,9 @@ parser.add_argument(
     "-t", "--telemetry", action="store_true", dest="telemetry",
     help="send all key/value pairs in a single /telemetry message")
 parser.add_argument(
+    "--prefix", action="store_true", dest="prefix",
+    help="force OSC address device name prefix for single device")
+parser.add_argument(
     "-f", "--file", action="store", dest="file",
     default="", help="JSON configuration file")
 parser.add_argument("-v", "--verbose", action='count', dest="verbose",
@@ -67,12 +70,17 @@ class Config:
         self.host = ""
         self.user = ""
         self.password = ""
-        self.ids = [] # device ids
-        self.devices = {} # device names by OSC address key
+        self.ids = [] # device ids to subscribe to
         self.address = "127.0.0.1"
         self.port = 7788
         self.telemetry = False
+        self.prefix = False # force OSC address device name prefix?
         self.verbose = False
+
+        # subscribed device array of dicts, keys are:
+        # * name: device name as shown in ThingsBoard UI
+        # * key: device name as OSC address key prefix
+        self.devices = []
 
     # load config from env vars, optional file, and commandline arguments
     def load(self, args):
@@ -83,31 +91,36 @@ class Config:
         self._load_args(args)
         return self._validate()
 
-    # add device name to known devices by OSC address key,
+    # add device name to known devices by OSC address key prefix,
     # key will be stripped on non alphanumeric chars and made lowercase
     def add_device(self, key, name):
         key = re.sub("[\W_]+", "", key).lower()
-        if key in self.devices:
-            print(f"ignoring duplicate device: {key} {name}")
-        else:
-            self.devices[key] = name
+        for device in self.devices:
+            if key == device["key"]:
+                print(f"ignoring duplicate device: {key} {name}")
+                return
+        self.devices.append({"key": key, "name": name})
+        if len(self.devices) > 1: self.prefix = True
 
     # print current values
     def print(self):
         print(f"host: {self.host}")
         print(f"user: {self.user}")
-        print(f"device id(s): {self.ids}")
+        print(f"device id(s):")
+        for device_id in self.ids:
+            print(f"  {device_id}")
         print(f"address: {self.address}")
         print(f"port: {self.port}")
         print(f"telemetry: {self.telemetry}")
+        print(f"prefix: {self.prefix}")
         print(f"verbose: {self.verbose}")
 
     # print device OSC address key to name mappings
     def print_devices(self):
         if len(self.devices) > 0:
             print("device(s)")
-            for key in self.devices:
-                print(f"  /{key} <- {self.devices[key]}")
+            for device in self.devices:
+                print(f"  /{device['key']} <- {device['name']}")
 
     # load env vars
     def _load_env(self):
@@ -116,6 +129,7 @@ class Config:
         if "THOSCY_PASS" in os.environ: self.password = os.environ.get("THOSCY_PASS")
 
     # load JSON file, returns True on success
+    # TODO: check if key xists without throwing exception
     def _load_file(self, path):
         try:
             f = open(args.file)
@@ -127,9 +141,11 @@ class Config:
             if config["verbose"] != None: self.verbose = config["verbose"]
             recv = config["recv"]
             if recv != None:
+                try:
                 if recv["address"] != None: self.address = recv["address"]
                 if recv["port"] != None: self.port = recv["port"]
                 if recv["telemetry"] != None: self.telemetry = recv["telemetry"]
+                if recv["prefix"] != None: self.prefix = recv["prefix"]
                 if recv["devices"] != None and len(recv["devices"]) > 0 and \
                    config["devices"] != None and len(config["devices"]) > 0:
                        for name in recv["devices"]:
@@ -153,6 +169,7 @@ class Config:
         if args.address != "": self.address = args.address
         if args.port != -1: self.port = args.port
         if not self.telemetry and args.telemetry: self.telemetry = True
+        if not self.prefix and args.prefix: self.prefix = True
         if not self.verbose and args.verbose: self.verbose = True
         # append
         for device in args.ids: self.ids.append(device)
@@ -179,10 +196,20 @@ class Config:
             return False
         return True
 
+    # returns True if key exists in src dict
+    @staticmethod
+    def _key_exists(src, key):
+        try:
+            return src[key] != None
+        except KeyError:
+            pass
+        return False
+
 ##### thingsboard
 
+# device info callback, ignore if not using device name prefix
 def received_devices(devices):
-    if len(devices) < 2: return
+    if len(config.devices) < 2 and not config.prefix: return
     for device in devices:
         name = device['name']
         config.add_device(name, name)
@@ -198,11 +225,20 @@ def received_telemetry(data):
         else:
             print("telemetry error: data empty, did connection fail?")
         return
+    prefix = "/"
+    if config.prefix:
+        # device name prefix?
+        data_id = data["subscriptionId"]
+        device = config.devices[data_id]
+        if device == None or device["key"] == None or device["key"] == "":
+            print(f"telemetry warning: received update from unknown device: {data_entry.keys()}")
+            return
+        prefix = prefix + device["key"] + "/"
     if config.telemetry:
         # send multiple values:
         # {"value1": 123, "value2": 456} -> "/telemetry value1 123 value2 456"
-        message = osc_message_builder.OscMessageBuilder(address="/telemetry")
-        if args.verbose: print("/telemetry", end="")
+        message = osc_message_builder.OscMessageBuilder(address=prefix+"telemetry")
+        if args.verbose: print(prefix+"telemetry", end="")
         for key in data_entry.keys():
             if key == "" or key == "json": continue
             value = data_entry[key][0][1]
@@ -226,10 +262,12 @@ def received_telemetry(data):
                 value = float(value)
             except:
                 pass
-            message = osc_message_builder.OscMessageBuilder(address="/"+key)
+            message = osc_message_builder.OscMessageBuilder(address=prefix+key)
             message.add_arg(value)
             bundle.add_content(message.build())
-            if config.verbose: print(f"{key}: {value}")
+            if config.verbose:
+                if prefix != "/": print(f"{prefix} ", end="")
+                print(f"{key}: {value}")
         sender.send(bundle.build())
 
 ##### main
@@ -249,8 +287,10 @@ if config.verbose: config.print()
 sender = SimpleUDPClient(config.address, config.port)
 
 # connect & subscribe to device telemetry
+# the cmdId key is returned as the subscriptionId key when receiving telemetry,
+# in this case we use it as an index in the config.devices array
 subscription_cmd = {"tsSubCmds": []}
-cmd_id = 10
+cmd_id = 0
 for device_id in config.ids:
     subscription_cmd["tsSubCmds"].append(
         {
@@ -260,15 +300,7 @@ for device_id in config.ids:
             "cmdId": cmd_id
         }
     )
-    # FIXME
-    # In order to tell device responses apart, setting a unique cmdId should
-    # result in the server response setting the subscriptionId, however this
-    # fails to work in practice beyond the initial connection response. In fact,
-    # setting different cmdIds results in only the *last* subcription to report
-    # live changes. If all of the cmdIds are the same (non-unique), then all
-    # devices report live updates. Tested with ThingsBoard v.3.3.4.1.
-    # Hopefully this will be fixed in a newer ThingsBoard versions.
-    #cmd_id = cmd_id + 1
+    cmd_id = cmd_id + 1
 receiver = thoscy.TBReceiver(subscription_cmd=subscription_cmd, \
                              telemetry_callback=received_telemetry, \
                              device_callback=received_devices, **vars(config))

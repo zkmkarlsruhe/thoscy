@@ -162,7 +162,7 @@ thoscy-send can send to multiple devices through a single ThingsBoard gateway de
 _Note: Make sure to escape any names which include spaces by using double-quotes on the commandline._
 
 The device names are used as the first component in the OSC address: `"/device1/value 123 -> {"value": 123} to "device 1"`
-* OSC address must be prepended with the device name
+* OSC address must be prepended with the device name prefix
 * Device names are made lowercase and stripped of non-alphanumeric chars, ie. "device 1" becomes "/device1"
 
 Any device names which do not exist on the ThingsBoard server will automatically be created through the gateway.
@@ -186,6 +186,7 @@ optional arguments:
                         OSC send address, default: 127.0.0.1
   -p PORT, --port PORT  OSC send port, default: 7788
   -t, --telemetry       send all key/value pairs in a single /telemetry message
+  --prefix              force OSC address device name prefix for single device
   -f FILE, --file FILE  JSON configuration file
   -v, --verbose         enable verbose printing, use -vv for debug verbosity
 ~~~
@@ -249,8 +250,10 @@ _Note: Forwarding telemetry messages as a `/telemetry` OSC message with multiple
 #### Multiple-Device Handling
 
 When starting thoscy-recv with multiple device ids, the device names are fetched from the server and used as the first component in the OSC address: `{"value": 123} from "device 1" -> "/device1/value 123"`
-* OSC address is prepended with the device name
+* OSC address is prepended with the device name prefix
 * Device names are made lowercase and stripped of non-alphanumeric chars, ie. "device 1" becomes "/device1"
+
+_Note: When starting thoscy-recv with a **single device**, the device prefix is not used by default. This behavior can be changed via the `--prefix` commandline option or JSON config "prefix" key._
 
 ### JSON config file
 
@@ -272,6 +275,7 @@ Configuration variables can be given to either thoscy tool via a JSON file which
   - **address**: _string_, OSC send address
   - **port**: _int_, OSC send port (>1024)
   - **telemetry**: _bool_, send key/value pairs in single /telemetry message
+  - **prefix**: _bool_, force OSC address device name prefix for single device
   - **devices**: _array_, devices to receive from by keyname in the main devices dict
 
 _Note: Values are be overridden when the corresponding commandline option is used._

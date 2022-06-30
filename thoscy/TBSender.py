@@ -66,26 +66,22 @@ class TBSender:
         self.thingsboard.disconnect()
 
     # send telemetry JSON payload
-    # when sending to a gateway, set the gateway_device as either:
-    # * an int: self.gateway_devices index, or
-    # * a str: device name string (as displayed in the Thingsboard UI)
+    # when sending to a gateway, set the device as either:
+    # * device_index: int, self.gateway_devices index, or
+    # * device_name: str, device name string (as displayed in the Thingsboard UI
     # returns True on success
-    def send_telemetry(self, data, gateway_device=None):
+    def send_telemetry(self, data, device_index=None, device_name=None):
         if data == None: return False
         if self.values_stringified:
            data = TBSender.stringify_values(data)
         try:
             if self.gateway:
-                name = None
-                if isinstance(gateway_device, str):
-                    name = gateway_device 
-                elif isinstance(gateway_device, int) and \
-                   gateway_device < len(self.gateway_devices):
-                    name = self.gateway_devices[gateway_device]
+                name = device_name
+                if name == None and device_index < len(self.gateway_devices):
+                    name = self.gateway_devices[device_index]
                 if name == None:
-                    logger.warning(f"send failed: gateway device not found: {gateway_device}")
+                    logger.warning(f"send failed: gateway device for index {device_index} or name {device_name}")
                     return False
-                # FIXME
                 # It seems that gw_send_telemetry() expects both "ts" *and* "values" keys.
                 # Sending only the "values" key results in setting "values": data in the device
                 # telemetry instead of unpacking the key/values pairs in data. We provide a

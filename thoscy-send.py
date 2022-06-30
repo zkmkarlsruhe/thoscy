@@ -58,10 +58,12 @@ class Config:
     def __init__(self):
         self.host = ""
         self.token = ""
-        self.devices = {} # device names by OSC address key
         self.address = "127.0.0.1"
         self.port = 7777
         self.verbose = False
+
+        # device names by OSC address key
+        self.devices = {}
 
     # load config from env vars, optional file, and commandline arguments
     def load(self, args):
@@ -71,7 +73,7 @@ class Config:
         self._load_args(args)
         return self._validate()
 
-    # add device name to known devices by OSC address key,
+    # add device name to known devices by OSC address key prefix,
     # key will be stripped on non alphanumeric chars and made lowercase
     def add_device(self, key, name):
         key = re.sub("[\W_]+", "", key).lower()
@@ -96,6 +98,7 @@ class Config:
                 print(f"  /{key} -> {self.devices[key]}")
 
     # load JSON file, returns True on success
+    # TODO: check if key xists without throwing exception
     def _load_file(self, path):
         try:
             f = open(args.file)
@@ -140,7 +143,7 @@ class Config:
             print("host required")
             return False
         if self.token == "":
-            print("device token required")
+            print("device access token required")
             return False
         return True
 
@@ -151,20 +154,20 @@ def received_osc(address, *args):
     if config.verbose:
         print(f"{address} {args}")
     if sender.gateway:
-        # using gateway: filter first address component as device
+        # using gateway: filter first address component as device name prefix
         components = address.split("/")
-        if len(components) < 3: # need min of: / device / key
+        if len(components) < 3: # need min of: / prefix / key
             print(f"invalid osc address: {address}")
             return
-        key = components[1]
+        prefix = components[1]
         try:
-            name = config.devices[key]
+            name = config.devices[prefix]
         except:
-            print(f"unknown device: {key}")
+            print(f"unknown device: {prefix}")
             return
         address = "/" + "/".join(components[2:])
         data = thoscy.osc_to_json(address, list(args))
-        sender.send_telemetry(data, gateway_device=name)
+        sender.send_telemetry(data, device_name=name)
     else:
         # single device
         data = thoscy.osc_to_json(address, list(args))
