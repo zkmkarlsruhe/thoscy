@@ -201,7 +201,6 @@ class TBReceiver:
     # set log level
     @staticmethod
     def set_verbose(verbose):
-        #logger.setLevel(logging.DEBUG if verbose else logging.WARNING)
         logging.basicConfig(level=(logging.DEBUG if verbose else logging.INFO))
 
 ##### main

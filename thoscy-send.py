@@ -104,20 +104,22 @@ class Config:
             f = open(args.file)
             config = json.load(f)
             f.close()        
-            if config["host"] != None: self.host = config["host"]
-            if config["verbose"] != None: self.verbose = config["verbose"]
-            send = config["send"]
-            if send != None:
-                if send["token"] != None: self.token = send["token"]
-                if send["address"] != None: self.address = send["address"]
-                if send["port"] != None: self.port = send["port"]
-                if send["devices"] != None and len(send["devices"]) > 0 and \
-                    config["devices"] != None and len(config["devices"]) > 0:
+            if "host" in config.keys(): self.host = config["host"]
+            if "verbose" in config.keys(): self.verbose = config["verbose"]
+            if "send" in config.keys():
+                send = config["send"]
+                if "token" in send.keys(): self.token = send["token"]
+                if "address" in send.keys(): self.address = send["address"]
+                if "port" in send.keys(): self.port = send["port"]
+                if "devices" in send.keys() and len(send["devices"]) > 0 and \
+                    "devices" in config.keys() and len(config["devices"]) > 0:
                     for key in send["devices"]:
+                        if key not in config["devices"].keys():
+                            print(f"ignoring unknown send device: {key}")
+                            continue
                         device = config["devices"][key]
-                        if device == None or \
-                           device["name"] == None or \
-                           device["name"] == "":
+                        if "name" not in device.keys() or device["name"] == "":
+                            print(f"ignoring send device without name: {key}")
                             continue
                         name = device["name"]
                         self.add_device(name, name)

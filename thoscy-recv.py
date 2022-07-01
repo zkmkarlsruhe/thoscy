@@ -108,7 +108,7 @@ class Config:
         print(f"user: {self.user}")
         print(f"device id(s):")
         for device_id in self.ids:
-            print(f"  {device_id}")
+            print(f"{device_id}")
         print(f"address: {self.address}")
         print(f"port: {self.port}")
         print(f"telemetry: {self.telemetry}")
@@ -120,7 +120,7 @@ class Config:
         if len(self.devices) > 0:
             print("device(s)")
             for device in self.devices:
-                print(f"  /{device['key']} <- {device['name']}")
+                print(f"/{device['key']} <- {device['name']}")
 
     # load env vars
     def _load_env(self):
@@ -135,24 +135,25 @@ class Config:
             f = open(args.file)
             config = json.load(f)
             f.close()        
-            if config["host"] != None: self.host = config["host"]
-            if config["user"] != None: self.user = config["user"]
-            if config["password"] != None: self.password = config["password"]
-            if config["verbose"] != None: self.verbose = config["verbose"]
-            recv = config["recv"]
-            if recv != None:
-                try:
-                if recv["address"] != None: self.address = recv["address"]
-                if recv["port"] != None: self.port = recv["port"]
-                if recv["telemetry"] != None: self.telemetry = recv["telemetry"]
-                if recv["prefix"] != None: self.prefix = recv["prefix"]
-                if recv["devices"] != None and len(recv["devices"]) > 0 and \
-                   config["devices"] != None and len(config["devices"]) > 0:
-                       for name in recv["devices"]:
-                        device = config["devices"][name]
-                        if device == None or \
-                           device["id"] == None or \
-                           device["id"] == "":
+            if "host" in config.keys(): self.host = config["host"]
+            if "user" in config.keys(): self.user = config["user"]
+            if "password" in config.keys(): self.password = config["password"]
+            if "verbose" in config.keys(): self.verbose = config["verbose"]
+            if "recv" in config.keys():
+                recv = config["recv"]
+                if "address" in recv.keys(): self.address = recv["address"]
+                if "port" in recv.keys(): self.port = recv["port"]
+                if "telemetry" in recv.keys(): self.telemetry = recv["telemetry"]
+                if "prefix" in recv.keys(): self.prefix = recv["prefix"]
+                if "devices" in recv.keys() and len(recv["devices"]) > 0 and \
+                   "devices" in config.keys() and len(config["devices"]) > 0:
+                    for key in recv["devices"]:
+                        if key not in config["devices"].keys():
+                            print(f"ignoring unknown recv device: {key}")
+                            continue
+                        device = config["devices"][key]
+                        if "id" not in device.keys() or device["id"] == "":
+                           print(f"ignoring recv device without name: {key}")
                            continue
                         self.ids.append(device["id"])
         except Exception as exc:
@@ -196,15 +197,6 @@ class Config:
             return False
         return True
 
-    # returns True if key exists in src dict
-    @staticmethod
-    def _key_exists(src, key):
-        try:
-            return src[key] != None
-        except KeyError:
-            pass
-        return False
-
 ##### thingsboard
 
 # device info callback, ignore if not using device name prefix
@@ -225,20 +217,21 @@ def received_telemetry(data):
         else:
             print("telemetry error: data empty, did connection fail?")
         return
-    prefix = "/"
+    prefix = ""
     if config.prefix:
         # device name prefix?
         data_id = data["subscriptionId"]
         device = config.devices[data_id]
-        if device == None or device["key"] == None or device["key"] == "":
+        if device == None or "key" not in device.keys() or device["key"] == "":
             print(f"telemetry warning: received update from unknown device: {data_entry.keys()}")
             return
-        prefix = prefix + device["key"] + "/"
+        prefix = "/" + device["key"]
     if config.telemetry:
         # send multiple values:
         # {"value1": 123, "value2": 456} -> "/telemetry value1 123 value2 456"
-        message = osc_message_builder.OscMessageBuilder(address=prefix+"telemetry")
-        if args.verbose: print(prefix+"telemetry", end="")
+        address = prefix + "/telemetry"
+        message = osc_message_builder.OscMessageBuilder(address=address)
+        if args.verbose: print(address, end="")
         for key in data_entry.keys():
             if key == "" or key == "json": continue
             value = data_entry[key][0][1]
@@ -262,11 +255,12 @@ def received_telemetry(data):
                 value = float(value)
             except:
                 pass
-            message = osc_message_builder.OscMessageBuilder(address=prefix+key)
+            address = prefix + "/" + key
+            message = osc_message_builder.OscMessageBuilder(address=address)
             message.add_arg(value)
             bundle.add_content(message.build())
             if config.verbose:
-                if prefix != "/": print(f"{prefix} ", end="")
+                if prefix != "": print(f"{prefix} ", end="")
                 print(f"{key}: {value}")
         sender.send(bundle.build())
 

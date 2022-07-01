@@ -353,6 +353,13 @@ There is the `pd/loopback.pd` patch which pairs a sender and receiver with basic
 
 Turn on random temperature messages and lower the message frequency in ms to see how quickly messages can be sent and received before matched send/recv pairs start to mix. Add maybe 20-50 ms on top of that for a basic effective update frequency. This value is likely based on network configuration, if sending over a local LAN or over the internet, ThingsBoard server resources, etc.
 
+Python Modules
+--------------
+
+The MQTT send, WebSocket receive, and OSC & JSON parsers are written as seaprate Python modules within the `thoscy` library directory and can be reused within other projects.
+
+For example, to recieve from a ThingsBoard server use the `thoscy/TBReceiver` class which wraps up the authentication and communication with the server.
+
 The Intelligent Museum
 ----------------------
 
