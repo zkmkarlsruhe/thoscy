@@ -200,6 +200,8 @@ class Config:
 ##### thingsboard
 
 # device info callback, ignore if not using device name prefix
+# FIXME: what to do if # devices does not match up with # config.devices?
+#        in this case, the cmdId/subscriptionId indices could be wrong
 def received_devices(devices):
     if len(config.devices) < 2 and not config.prefix: return
     for device in devices:
@@ -231,7 +233,7 @@ def received_telemetry(data):
         # {"value1": 123, "value2": 456} -> "/telemetry value1 123 value2 456"
         address = prefix + "/telemetry"
         message = osc_message_builder.OscMessageBuilder(address=address)
-        if args.verbose: print(address, end="")
+        if config.verbose: print(address, end="")
         for key in data_entry.keys():
             if key == "" or key == "json": continue
             value = data_entry[key][0][1]
