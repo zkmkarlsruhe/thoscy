@@ -16,5 +16,5 @@ DIR="$(dirname $0)"
 SCRIPT=thoscy-recv.py
 
 . "$DIR"/venv/bin/activate
-"$DIR"/$SCRIPT $@
+"$DIR"/$SCRIPT "$@"
 deactivate
