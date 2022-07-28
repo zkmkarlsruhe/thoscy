@@ -1,3 +1,18 @@
+1.0.0: 2022 Jul 28
+
+* fixed string parsing in wrapper scripts
+
+* added support for multiple devices
+* added transparent multiple value and nested address handling
+* added json config file reading
+* added THOSCY_USER & THOSCY_PASS env variables
+* added pd multi example clients
+
+* refactored code into thoscy modules:
+  TBSender, TBReceiver, oscparser, jsonparser
+
+* removed unused python lib requirements
+
 0.2.0: 2022 Mar 30
 
 beta
