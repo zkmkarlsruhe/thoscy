@@ -61,7 +61,7 @@ class TBReceiver:
         self.ping_timeout = kwargs.get("ping_timeout") or 5
         self.sleep_time = kwargs.get("sleep_time") or 5
 
-    # connect to server and receive telemtery events,
+    # connect to server and receive telemetry events,
     # attempts reconnection on failure
     async def listen_forever(self):
         while True:
@@ -101,7 +101,8 @@ class TBReceiver:
                                 break
                         logger.debug(f"server said: {reply}")
                         data = json.loads(reply)
-                        if self.values_stringified: data = TBReceiver.parse_values(data)
+                        if self.values_stringified:
+                            data["data"] = TBReceiver.parse_values(data["data"])
                         self.telemetry_callback(data)
             except socket.gaierror:
                 logger.error(f"socket error, retrying connection in {self.sleep_time} s")
@@ -182,16 +183,17 @@ class TBReceiver:
             return None
         return req.json()
 
-    # parse stringified JSON object or array values
+    # parse stringified JSON object or array values in telemetry message
     @staticmethod
     def parse_values(data):
         for key in data:
-            value = data[key]
-            if isinstance(value, str) and not len(value) == 0 and \
+            if key == "latestValues": continue
+            value = data[key][0][1]
+            if isinstance(value, str) and len(value) != 0 and \
                 ((value[0] == '{' and value[-1] == '}') or \
                  (value[0] == '[' and value[-1] == ']')):
                 try:
-                    data[key] = json.loads(value)
+                    data[key][0][1] = json.loads(value)
                     logger.debug(f"parsed {key}: {value}")
                 except json.JSONDecodeError as exc:
                     logger.debug(f"parse failed for {key}: {exc}")

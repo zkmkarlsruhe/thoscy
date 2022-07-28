@@ -10,7 +10,7 @@
 #X obj 72 303 print thoscytest1;
 #X obj 172 274 print thoscytest2;
 #X obj 272 244 print other;
-#X text 156 173 route by device name: "thoscy test 1" & "thoscy test
+#X text 156 175 route by device name: "thoscy test 1" & "thoscy test
 2";
 #X connect 0 0 1 0;
 #X connect 1 0 5 0;

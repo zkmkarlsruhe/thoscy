@@ -98,7 +98,7 @@ class Config:
                 print(f"  /{key} -> {self.devices[key]}")
 
     # load JSON file, returns True on success
-    # TODO: check if key xists without throwing exception
+    # TODO: check if key exists without throwing exception
     def _load_file(self, path):
         try:
             f = open(args.file)
@@ -151,10 +151,11 @@ class Config:
 
 ##### osc
 
-# send single values: "/some/value 123" -> {"value": 123}
+# osc message callback, send osc messages as json
+# see oscparser.py for conversion details
 def received_osc(address, *args):
     if config.verbose:
-        print(f"{address} {args}")
+        print(f"{address} {list(args)}")
     if sender.gateway:
         # using gateway: filter first address component as device name prefix
         components = address.split("/")
@@ -198,7 +199,6 @@ args = None
 parser = None
 if config.verbose:
     config.print()
-    config.print_devices()
 
 # connect to thingsboard
 sender = thoscy.TBSender(config.host, config.token, \
@@ -216,6 +216,8 @@ loop.run_until_complete(receiver.create_serve_endpoint())
 
 # wait for osc receiver to exit
 print(f"osc {config.address}:{config.port} -> mqtt {config.host}")
+if config.verbose:
+    config.print_devices()
 try:
     loop.run_forever()
 except KeyboardInterrupt:

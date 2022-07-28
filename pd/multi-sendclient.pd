@@ -11,6 +11,7 @@
 #X obj 113 161 oscformat /thoscytest1/temperature;
 #X text 109 104 send key/value to "thocsy test 1": temperature f;
 #X text 134 203 send key/value to "thoscy test 2": hello f;
+#X msg 214 229 list foo bar 123;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 3 0 8 0;
@@ -18,3 +19,4 @@
 #X connect 6 0 7 0;
 #X connect 7 0 0 0;
 #X connect 8 0 0 0;
+#X connect 11 0 7 0;

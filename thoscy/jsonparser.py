@@ -17,7 +17,9 @@ import json
 #
 # single values: {"value": 123} -> "/value 123"
 #      or
-# multiple values:
+# multiple values: {"value": [1, 2, 3, 4]} -> "/value 1 2 3 4"
+#      or
+# multiple key/value pairs:
 # {"value1": 123, "value2": 456} -> "/telemetry value1 123 value2 456"
 #
 # examples:
@@ -25,10 +27,10 @@ import json
 #   {"foo": {"bar": 123}}             -> /foo/bar 123
 #   {"bar": {"baz": ["abc", 123]}}    -> /bar/baz abc 123
 #   {"foo": {"bar": 123, "baz": 456}} -> /foo/telemetry bar 123 baz 456
+#   {"baz": [1, 2, 3, 4]}             -> /baz 1 2 3 4
 #
-# returns (address, args) tuple on success or (None,None) on failure
+# returns (address,args) tuple on success or (None,None) on failure
 def json_to_osc(data):
-    print(data)
     if len(data) == 0:
         print("json empty")
         return (None, None)
@@ -51,12 +53,12 @@ def json_to_osc(data):
     args = []
     if len(current) == 1: # single pair
         for key,value in current.items():
-            try:
-                value = float(value)
-            except:
-                pass
             components.append(key)
-            args = value
+            if isinstance(value, list): # break up lists
+                for v in value:
+                    args.append(try_float(v))
+            else:
+                args.append(try_float(value))
             break
     else: # multiple k/v pair /telemetry message
         components.append("telemetry")
@@ -64,14 +66,18 @@ def json_to_osc(data):
             if isinstance(value, list):
                 print(f"skipping list in multiple key/value pair message: {key} {value}")
                 continue
-            try:
-                value = float(value)
-            except:
-                pass
             args.append(key)
-            args.append(value)
+            args.append(try_float(value))
     address = "/" + "/".join(components)
     return (address,args)
+
+# try to convert value to a float, otherwise pass unchanged
+def try_float(value):
+    try:
+        value = float(value)
+    except:
+        pass
+    return value
 
 # commandline test
 # example usage: ./jsonparser.py '{"foo": {"bar": 123}}'

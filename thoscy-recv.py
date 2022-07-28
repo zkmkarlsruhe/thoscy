@@ -129,7 +129,7 @@ class Config:
         if "THOSCY_PASS" in os.environ: self.password = os.environ.get("THOSCY_PASS")
 
     # load JSON file, returns True on success
-    # TODO: check if key xists without throwing exception
+    # TODO: check if key exists without throwing exception
     def _load_file(self, path):
         try:
             f = open(args.file)
@@ -203,14 +203,15 @@ class Config:
 # FIXME: what to do if # devices does not match up with # config.devices?
 #        in this case, the cmdId/subscriptionId indices could be wrong
 def received_devices(devices):
-    if len(config.devices) < 2 and not config.prefix: return
+    if len(devices) < 2 and not config.prefix: return
     for device in devices:
         name = device['name']
         config.add_device(name, name)
     if config.verbose: config.print_devices()
 
 # telemetry callback, sends key/value pairs as osc messages
-# note: tries to convert values to float, ignores json keys for now
+# note: tries to convert values to float, ignores json keys for now,
+#       see jsonparser.py for details
 def received_telemetry(data):
     data_entry = data["data"]
     if data_entry == None:
@@ -229,41 +230,34 @@ def received_telemetry(data):
             return
         prefix = "/" + device["key"]
     if config.telemetry:
-        # send multiple values:
-        # {"value1": 123, "value2": 456} -> "/telemetry value1 123 value2 456"
+        # send multiple key/value pairs
         address = prefix + "/telemetry"
         message = osc_message_builder.OscMessageBuilder(address=address)
         if config.verbose: print(address, end="")
         for key in data_entry.keys():
             if key == "" or key == "json": continue
             value = data_entry[key][0][1]
-            try:
-                value = float(value)
-            except:
-                pass
+            _,args = thoscy.json_to_osc({key: value})
             message.add_arg(key)
-            message.add_arg(value)
+            message.add_arg(args[0])
             if config.verbose: print(f" {key}: {value}", end="")
         sender.send(message.build())
         if config.verbose: print("")
     else:
-        # send single values: {"value": 123} -> "/value 123"
-        # combines multiple message into a bundle
+        # send single values or arrays
         bundle = osc_bundle_builder.OscBundleBuilder(osc_bundle_builder.IMMEDIATELY)
         for key in data_entry.keys():
             if key == "" or key == "json": continue
             value = data_entry[key][0][1]
-            try:
-                value = float(value)
-            except:
-                pass
-            address = prefix + "/" + key
+            address,args = thoscy.json_to_osc({key: value})
+            if prefix != "":
+                address = prefix + address
             message = osc_message_builder.OscMessageBuilder(address=address)
-            message.add_arg(value)
+            for arg in args:
+                message.add_arg(arg)
             bundle.add_content(message.build())
             if config.verbose:
-                if prefix != "": print(f"{prefix} ", end="")
-                print(f"{key}: {value}")
+                print(f"{address} {args}")
         sender.send(bundle.build())
 
 ##### main

@@ -142,12 +142,17 @@ To stop thoscy-send, use CTRL+C to issue an interrupt signal.
 
 Once running, thoscy-send automatically parses OSC messages into telemetry messages to send to the device on ThingsBoard via MQTT. Message handling is as follows:
 
-Send single values: `"/some/value 123" -> {"value": 123}`
+Send single values: `"/value 123" -> {"value": 123}`
 * Last address component used as entity key
 * First argument uses as entity value
 * Message must contain at least one argument
 
-Send multiple values: `"/telemetry value1 123 value2 456" -> {"value1": 123, "value2": 456}`
+Send multiple values: `"/values 1 2 3" -> {"values": [1, 2, 3]}`
+* Last address component used as entity key
+* Arguments used as list
+* Message must contain at least two arguments
+
+Send multiple key/value pairs: `"/telemetry value1 123 value2 456" -> {"value1": 123, "value2": 456}`
 * Last address component `telemetry`
 * Arguments are treated as entity key/value pairs
 * Each argument key must be a string type
@@ -170,7 +175,7 @@ Any device names which do not exist on the ThingsBoard server will automatically
 ### thosy-recv
 
 ~~~
-usage: thoscy-recv.py [-h] [--user USER] [--password PASSWORD] [-a ADDRESS] [-p PORT] [-t] [-f FILE] [-v] [HOST] [ID ...]
+usage: thoscy-recv.py [-h] [--user USER] [--password PASSWORD] [-a ADDRESS] [-p PORT] [-t] [--prefix] [-f FILE] [-v] [HOST] [ID ...]
 
 OSC <- ThingsBoard websocket relay server
 
@@ -239,8 +244,12 @@ Receive single values: `{"value": 123} -> "/value 123"`
 * Entity key used as address component
 * JSON key/value pairs are ignored
 
-Receive multiple values: `{"value1": 123, "value2": 456} -> "/telemetry value1 123 value2 456"`
-* Key/value pairs sent in a OSC single message
+Receieve multiple values: `{"values": [1, 2, 3]} -> "/values 1 2 3"`
+* Values in array used sent as message arguments
+* JSON key/value pairs are ignored
+
+Receive multiple key/value pairs: `{"value1": 123, "value2": 456} -> "/telemetry value1 123 value2 456"`
+* Key/value pairs sent in a single OSC message
 * Key/value pairs appended as arguments
 * Value types: string or float
 * JSON key/value pairs are ignored
