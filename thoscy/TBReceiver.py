@@ -75,7 +75,7 @@ class TBReceiver:
                     await ws.send(json.dumps(self.subscription_cmd))
                     # fetch device info?
                     if self.device_callback:
-                        try:                    
+                        try:
                             device_ids = []
                             for sub in self.subscription_cmd["tsSubCmds"]:
                                 if sub["entityType"] == "DEVICE":
