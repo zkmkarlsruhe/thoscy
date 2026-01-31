@@ -1,5 +1,20 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/zkmkarlsruhe/zkm-open-source/main/assets/zkm-logo-light.svg">
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/zkmkarlsruhe/zkm-open-source/main/assets/zkm-logo.svg">
+    <img alt="ZKM" src="https://raw.githubusercontent.com/zkmkarlsruhe/zkm-open-source/main/assets/zkm-logo.svg" width="120">
+  </picture>
+</p>
+
 thoscy
 ======
+
+[![ZKM](https://img.shields.io/badge/ZKM-Karlsruhe-blue)](https://zkm.de)
+[![License: BSD-2-Clause](https://img.shields.io/badge/License-BSD--2--Clause-blue.svg)](LICENSE.txt)
+
+Part of [ZKM Open Source](https://github.com/zkmkarlsruhe)
+
+---
 
 ![thoscy logo](media/icon.png)
 
@@ -7,10 +22,10 @@ _thoscy: **th**ingsboard **osc** rela**y**_
 
 Relay messages between a ThingsBoard server and OSC.
 
-This code base has been developed by [ZKM | Hertz-Lab](https://zkm.de/en/about-the-zkm/organization/hertz-lab) as part of the project [»The Intelligent Museum«](#the-intelligent-museum). 
+This code base has been developed by [ZKM | Hertz-Lab](https://zkm.de/en/about-the-zkm/organization/hertz-lab) as part of the project [»The Intelligent Museum«](#the-intelligent-museum).
 
-Copyright (c) 2022 ZKM | Karlsruhe.  
-Copyright (c) 2022 Dan Wilcox.  
+Copyright (c) 2022 ZKM | Karlsruhe.
+Copyright (c) 2022 Dan Wilcox.
 
 BSD Simplified License.
 
